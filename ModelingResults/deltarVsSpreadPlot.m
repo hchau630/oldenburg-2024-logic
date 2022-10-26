@@ -6,9 +6,9 @@
 %
 % Written and edited by G Handy 10/14/2022
 %%
-
 clear; close all; clc;
 
+% Load the simulation data
 load('./SimData/spreadSimData.mat','actDist','aveSupp','total_fit','aveExc',...
     'exc_fit','inh_fit','aveInh')
 
