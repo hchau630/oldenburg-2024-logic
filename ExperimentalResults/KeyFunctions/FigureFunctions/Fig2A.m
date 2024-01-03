@@ -1,15 +1,17 @@
 %%
-% Reproduces the minimal distance to the ensemble plot
+% Reproduces the minimal distance to the ensemble plot (Fig. 2A)
 %
-% cellCond is a vector of 1's and 0's that denotes which cells should be
-% included (e.g., only non-offTarget cells)
+% Function inputs:
+%   cellTable: structure containing neuron data
+%   cellCond: a vector of 1's and 0's that denotes which cells should be
+%       included (e.g., only non-offTarget cells)
 %
-% Run cellByCellAnalysis_GH to use this function
 %%
-function Fig2(cellTable,cellCond)
+function Fig2A(cellTable,cellCond)
 
+
+%% We must average the results over the appropriate cells for each condition
 totalNumEns = cellTable.ensNum(end);
-
 distBins = [15:15:250];
 plotDist = distBins(1:end-1) + diff(distBins(1:2))/2;
 
@@ -30,29 +32,32 @@ end
 respAve = nanmean(cellDistDataAve,2);
 respStdErr = nanstd(cellDistDataAve,[],2)/sqrt(size(cellDistDataAve,2));
 
-%% Plot the results
+%% Plot Fig. 2A
 figure(); clf; hold on;
-leg(1) = plot(plotDist,respAve,'k.','markersize',20);
 e = errorbar(plotDist,respAve,respStdErr,'k','linewidth',2,'CapSize',0);
 e.LineStyle = 'none';
+leg(1) = plot(plotDist,respAve,'ko','markersize',10,'MarkerFaceColor',[1 1 1],'linewidth',2);
 plot([0 250],0*[0 250],'k--')
 xlim([0 250])
 xticks([0:25:250])
+xticklabels({0,'',50,'',100,'',150,'',200,'',250})
 maxVal = abs(max(respAve+respStdErr));
 minVal = abs(min(respAve-respStdErr));
 ylim([-round(max(minVal,maxVal),2) round(max(minVal,maxVal),2)])
 set(gca,'fontsize',16)
 ylabel('Mean evoked \DeltaF/F')
-xlabel('Min Dist to Stim Loc')
+xlabel('Minimal Distance to Ensemble (μm)')
 ylim([-0.02 0.07])
+yticks([-0.02:0.02:0.06])
 
-%% Fit the experimental data
+%% Fit the experimental data and plot the resulting line
 
 expFn = 'A*exp(-x^2./sigma1)+B*exp(-x^2./sigma2)';
+% fit function is from the Curve Fitting Toolbox from MathWorks
 fnFit = fit(plotDist',respAve,expFn,'StartPoint',[0.15 -0.02 500 2e4]);
 xPlot = [20:0.1:250];
 leg(2) = plot(xPlot,fnFit.A*exp(-xPlot.^2./fnFit.sigma1)+fnFit.B*exp(-xPlot.^2./fnFit.sigma2),'k','linewidth',1.5);
-legend(leg,{'Data','Fit'})
+legend(leg,{'Experimental Data','Fit'})
 
 % sigma1 and sigma2 are really the variances of the Gaussians
 fprintf('Fitted params: \n')
@@ -60,7 +65,7 @@ fprintf('A = %f, sigma1 =%f\n', fnFit.A, sqrt(fnFit.sigma1))
 fprintf('B = %f, sigma2 =%f\n', fnFit.B, sqrt(fnFit.sigma2))
 
 
-%%
+%% Print out the statistics
 
 nearbyCells = cellTable.cellDist < 30 & cellCond;
 fprintf('Nearby cells (<30 microns): %.3f +- %.3f \n',nanmean(cellTable.dff(nearbyCells)),...

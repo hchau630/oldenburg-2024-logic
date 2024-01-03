@@ -1,14 +1,14 @@
 %%
-% Reproduces iso vs. ortho plot
+% Reproduces Iso vs. Ortho plot (Fig. 3C)
 %
-% cellCond is a vector of 1's and 0's that denotes which cells should be
-% included (e.g., only non-offTarget cells)
+% Function inputs:
+%   cellTable: structure containing neuron data
+%   cellCondTuned: vector of 1's and 0's that denotes which cells should be
+%       included (e.g., only non-offTarget cells)
+%   mouseNames: cell array of mouse names for each ensemble
 %
-% Should only included tuned and visually responsive cells
-%
-% Run cellByCellAnalysis_GH to use this function
 %%
-function Fig4(cellTable,cellCondTuned,mouseNames)
+function Fig3C(cellTable,cellCondTuned,mouseNames)
 
 totalNumEns = cellTable.ensNum(end);
 distBins = [15:15:150];
@@ -48,21 +48,27 @@ for gg = 1:num_conds
 end
 
 %% Plot the result
-colorScheme = [[0,0,139]/255; [128,0,128]/255; [255,0,255]/255];
-figure(231); clf;
+colorScheme = [[37,41,108]/255; [108,47,132]/255; [195,62,108]/255];
+figure('Position',[663   715   904   278]);
 for gg = 1:3
     subplot(1,3,gg); hold on;
-    errorbar(plotDist,respAve(:,gg),respStdErr(:,gg),'linewidth',1.5,'color',colorScheme(gg,:),'capsize',0,'linewidth',2)
-    plot([0 250],0*[0 250],'k--')
+    errorbar(plotDist,respAve(:,gg),respStdErr(:,gg),'linewidth',2,'color',colorScheme(gg,:),'capsize',0,'linewidth',2)
+    plot([0 250],0*[0 250],'k--','LineWidth',1.5)
     xlim([0 150])
     set(gca,'fontsize',16)
     ylim([-0.1 0.125])
+    yticks([-0.1 0 0.1])
     if gg == 1
         title('Iso')
+        ylabel('Mean evoked \Delta F/F')
     elseif gg == 3
         title('Ortho')
     end
 end
+
+subplot(1,3,2)
+xlabel('Min. Distance from Ensemble (μm)')
+title('\pm 45\circ')
 
 %%
 
