@@ -20,12 +20,12 @@ rmpath(folder);
 
 %% Specify data location and loadList
 
-error('Enter the location of the outfiles here')
-%loadPath = '/wherever/the/outfiles/are/'; 
+% error('Enter the location of the outfiles here')
+loadPath = '/Users/hoyinchau/local_documents/research/ken/will/Outfiles'; 
 
 % Options: short (for debugging), all (all avaliable outfiles), used (data
 % files currently being used here; created for speed)
-loadList_all = oriLoadList('short');
+loadList_all = oriLoadList('used');
 
 %% Loop over each experiment
 ensNum = 1; expNum = 1;
@@ -185,6 +185,19 @@ cellTable.cellOrisDiff = cellOrisDiff;
 
 %% Optional: After the code runs, save cellTable to the compressedData folder 
 
-% clearvars -except cellTable mouseNames
-% save('cellTableTodaysDate')
+clearvars -except cellTable mouseNames
+save('compressedData/cellTable250622.mat')
 
+% Matlab is idiotic and doesn't allow for controlling precision when saving
+% to csv, so manually convert numeric columns to strings before saving
+vars = cellTable.Properties.VariableNames;
+for k = 1:numel(vars)
+    varName = vars{k};
+    col = cellTable.(varName);
+    if isnumeric(col)
+        % Convert column to cell array of strings with 10 significant digits
+        strCell = arrayfun(@(x) num2str(x, '%.10g'), col, 'UniformOutput', false);
+        cellTable.(varName) = strCell;
+    end
+end
+writetable(cellTable, 'compressedData/cell_table_250622.csv')

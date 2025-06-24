@@ -104,10 +104,13 @@ figure('Position',[332   272   812   643]); clf;
 for jj = 1:2:3
     if jj == 1
         subplot(2,2,4); hold on;
+        kind = "untuned";
     else
         subplot(2,2,3); hold on;
         ylabel(sprintf('Compact\n Evoked ΔF/F'))
+        kind = "cotuned";
     end
+    writematrix([transpose(plotDist) respAveTight(:,jj) respStdErrTight(:,jj)], sprintf("figure_data/fig_4a/compact_%s.csv", kind));
     plot(plotDist,respAveTight(:,jj),'-','linewidth',2.5,'markersize',15,'color',colorScheme(jj,1,:))
     errorbar(plotDist,respAveTight(:,jj),respStdErrTight(:,jj),'linewidth',3,'color',colorScheme(jj,1,:),...
         'capsize',0)
@@ -126,6 +129,7 @@ for jj = 1:2:3
         temp = sprintf('Co-Tuned');
         ylabel(sprintf('Diffuse\n Evoked ΔF/F'))
     end
+    writematrix([transpose(plotDist) respAveLoose(:,jj) respStdErrLoose(:,jj)], sprintf("figure_data/fig_4a/spreadout_%s.csv", kind));
     plot(plotDist,respAveLoose(:,jj),'-','linewidth',2.5,'markersize',15,'color',colorScheme(jj,2,:))
     errorbar(plotDist,respAveLoose(:,jj),respStdErrLoose(:,jj),'linewidth',3,'color',colorScheme(jj,2,:),...
         'capsize',0)
